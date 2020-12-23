@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class PautaVotingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PautaVotingService.class);
-
+    public static final String THERE_IS_ALREADY_A_REGISTERED_VOTE_WITH_CPF = "There is already a registered vote with CPF ";
     public static final String CANNOT_FIND_ANY_REGISTRY_WITH_THIS_ID = "Cannot find any registry with this ID ";
     public static final String UNABLE_TO_VOTE_WITH_THIS_CPF = "Unable to vote with this CPF ";
 
@@ -51,9 +51,10 @@ public class PautaVotingService {
 
     public PautaVotingDTO addAnswerPautaVoting(String id, PautaVotingAnswerFormDTO pautaVotingAnswerFormDTO) {
         UserInfoDTO userInfoDTO = userInfoService.getByCpf(pautaVotingAnswerFormDTO.getCpf());
+        String cpf = pautaVotingAnswerFormDTO.getCpf();
 
         if(!isAbleToVote(userInfoDTO.getStatus())) {
-            throw new BadRequestException(UNABLE_TO_VOTE_WITH_THIS_CPF + pautaVotingAnswerFormDTO.getCpf());
+            throw new BadRequestException(UNABLE_TO_VOTE_WITH_THIS_CPF + cpf);
         }
 
         Optional<PautaVoting> pautaVoting = repository.findById(id);
@@ -62,11 +63,19 @@ public class PautaVotingService {
             throw new BadRequestException(CANNOT_FIND_ANY_REGISTRY_WITH_THIS_ID + id);
         }
 
+        if(existsVoteByCpf(pautaVoting.get(), cpf)) {
+            throw new BadRequestException(THERE_IS_ALREADY_A_REGISTERED_VOTE_WITH_CPF + cpf);
+        }
+
         PautaVotingAnswer pautaVotingAnswer = answerService.save(pautaVotingAnswerFormDTO);
         pautaVoting.get().addAnswer(pautaVotingAnswer);
 
         repository.save(pautaVoting.get());
         return mapper.map(pautaVoting.get(), PautaVotingDTO.class);
+    }
+
+    private boolean existsVoteByCpf(PautaVoting pautaVoting,String cpf) {
+        return pautaVoting.getAnswers().stream().anyMatch(answer -> answer.getCpf().equals(cpf));
     }
 
     private boolean isAbleToVote(String status) {
