@@ -1,0 +1,8 @@
+spring:
+  main:
+    banner-mode: "off"
+  application:
+    name: pauta-voting
+
+server:
+  port: 8080
