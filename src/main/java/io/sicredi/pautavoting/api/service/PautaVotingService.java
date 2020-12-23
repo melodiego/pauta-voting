@@ -2,7 +2,9 @@ package io.sicredi.pautavoting.api.service;
 
 import io.sicredi.pautavoting.api.dto.PautaVotingDTO;
 import io.sicredi.pautavoting.api.dto.form.PautaVotingAnswerFormDTO;
+import io.sicredi.pautavoting.api.enums.UserInfoStatusEnum;
 import io.sicredi.pautavoting.api.exception.BadRequestException;
+import io.sicredi.pautavoting.api.integration.dto.UserInfoDTO;
 import io.sicredi.pautavoting.api.model.PautaVoting;
 import io.sicredi.pautavoting.api.model.PautaVotingAnswer;
 import io.sicredi.pautavoting.api.repository.PautaVotingRepository;
@@ -21,15 +23,19 @@ public class PautaVotingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PautaVotingService.class);
 
     public static final String CANNOT_FIND_ANY_REGISTRY_WITH_THIS_ID = "Cannot find any registry with this ID ";
+    public static final String UNABLE_TO_VOTE_WITH_THIS_CPF = "Unable to vote with this CPF ";
 
     private final PautaVotingRepository repository;
     private final ModelMapper mapper;
-    private PautaVotingAnswerService answerService;
+    private final PautaVotingAnswerService answerService;
+    private final UserInfoService userInfoService;
 
-    public PautaVotingService(PautaVotingRepository repository, ModelMapper mapper, PautaVotingAnswerService answerService) {
+    public PautaVotingService(PautaVotingRepository repository, ModelMapper mapper,
+                              PautaVotingAnswerService answerService, UserInfoService userInfoService) {
         this.repository = repository;
         this.mapper = mapper;
         this.answerService = answerService;
+        this.userInfoService = userInfoService;
     }
 
     public List<PautaVotingDTO> findAll() {
@@ -44,6 +50,12 @@ public class PautaVotingService {
     }
 
     public PautaVotingDTO addAnswerPautaVoting(String id, PautaVotingAnswerFormDTO pautaVotingAnswerFormDTO) {
+        UserInfoDTO userInfoDTO = userInfoService.getByCpf(pautaVotingAnswerFormDTO.getCpf());
+
+        if(!isAbleToVote(userInfoDTO.getStatus())) {
+            throw new BadRequestException(UNABLE_TO_VOTE_WITH_THIS_CPF + pautaVotingAnswerFormDTO.getCpf());
+        }
+
         Optional<PautaVoting> pautaVoting = repository.findById(id);
 
         if(pautaVoting.isEmpty()) {
@@ -55,5 +67,9 @@ public class PautaVotingService {
 
         repository.save(pautaVoting.get());
         return mapper.map(pautaVoting.get(), PautaVotingDTO.class);
+    }
+
+    private boolean isAbleToVote(String status) {
+        return UserInfoStatusEnum.ABLE_TO_VOTE.getStatus().equalsIgnoreCase(status);
     }
 }
