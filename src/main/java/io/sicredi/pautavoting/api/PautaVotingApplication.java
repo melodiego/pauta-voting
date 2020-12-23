@@ -9,5 +9,4 @@ public class PautaVotingApplication {
     public static void main(String[] args) {
         SpringApplication.run(PautaVotingApplication.class, args);
     }
-
 }
