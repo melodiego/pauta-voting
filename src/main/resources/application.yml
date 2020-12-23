@@ -22,3 +22,11 @@ logging:
     org.springframework.data.mongodb.core.MongoTemplate: INFO
     org.apache.http: INFO
     org.springframework.web: INFO
+
+client:
+  url:
+    user-info: https://user-info.herokuapp.com
+
+feign:
+  logger:
+    level: FULL
