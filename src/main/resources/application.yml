@@ -26,6 +26,7 @@ logging:
 client:
   url:
     user-info: https://user-info.herokuapp.com
+    pauta-info: http://localhost:8081/pauta-info
 
 feign:
   logger:
