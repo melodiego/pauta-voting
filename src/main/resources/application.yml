@@ -30,3 +30,7 @@ client:
 feign:
   logger:
     level: FULL
+
+voting:
+  session:
+    time: 1

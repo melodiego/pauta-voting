@@ -28,6 +28,7 @@ public class PautaVoting implements Serializable {
     private List<PautaVotingAnswer> answers;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime sessionEnd;
 
     public void addAnswer(PautaVotingAnswer pautaVotingAnswer) {
         if(answers == null) {
