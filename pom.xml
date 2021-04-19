@@ -21,6 +21,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <swagger.version>2.9.2</swagger.version>
+        <spring.feign.version>3.0.2</spring.feign.version>
+        <model.mapper.version>2.3.7</model.mapper.version>
+        <lombok.version>[1.18.4,)</lombok.version>
+        <javax.xml.version>2.3.0</javax.xml.version>
     </properties>
 
     <dependencies>
@@ -53,7 +57,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>[1.18.4,)</version>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -68,7 +72,7 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.3.0</version>
+            <version>${javax.xml.version}</version>
         </dependency>
 
         <dependency>
@@ -82,11 +86,12 @@
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>2.3.7</version>
+            <version>${model.mapper.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${spring.feign.version}</version>
         </dependency>
     </dependencies>
 
